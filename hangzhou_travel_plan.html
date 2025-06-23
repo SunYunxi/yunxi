@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>杭州3日旅游规划表</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        @page {
+            size: A4;
+            margin: 10mm;
+        }
+        body {
+            width: 210mm;
+            height: 297mm;
+            margin: 0 auto;
+            font-family: 'Noto Sans SC', sans-serif;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #333;
+            background-color: #fff;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #333;
+        }
+        .header h1 {
+            font-size: 24px;
+            margin: 0 0 5px 0;
+            color: #2c3e50;
+        }
+        .header .subtitle {
+            font-size: 14px;
+            color: #666;
+            margin: 0 0 10px 0;
+        }
+        .weather-info {
+            display: inline-block;
+            background-color: #f5f5f5;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        .overview {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .day-card {
+            flex: 1;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 0 5px;
+            box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+        }
+        .day-card h3 {
+            margin: 0 0 8px 0;
+            color: #e74c3c;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+        .day-card h3 i {
+            margin-right: 5px;
+        }
+        .day-card ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .day-card li {
+            margin-bottom: 4px;
+            font-size: 11px;
+        }
+        .timeline {
+            margin-bottom: 15px;
+        }
+        .timeline h2 {
+            font-size: 16px;
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+        }
+        .timeline h2 i {
+            margin-right: 8px;
+            color: #3498db;
+        }
+        .timeline-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+        .timeline-table th,
+        .timeline-table td {
+            border: 1px solid #ddd;
+            padding: 6px 8px;
+            text-align: left;
+        }
+        .timeline-table th {
+            background-color: #f2f2f2;
+            font-weight: 500;
+            color: #555;
+        }
+        .timeline-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .timeline-table .time {
+            width: 12%;
+        }
+        .timeline-table .activity {
+            width: 25%;
+        }
+        .timeline-table .location {
+            width: 30%;
+        }
+        .timeline-table .details {
+            width: 33%;
+        }
+        .icon-label {
+            display: inline-block;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 10px;
+            margin-right: 5px;
+            color: white;
+        }
+        .icon-label.attraction {
+            background-color: #e74c3c;
+        }
+        .icon-label.food {
+            background-color: #2ecc71;
+        }
+        .icon-label.transport {
+            background-color: #3498db;
+        }
+        .icon-label.accommodation {
+            background-color: #9b59b6;
+        }
+        .transport-info h2,
+        .practical-info h2 {
+            font-size: 16px;
+            margin: 15px 0 10px 0;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+        }
+        .transport-info h2 i,
+        .practical-info h2 i {
+            margin-right: 8px;
+            color: #3498db;
+        }
+        .transport-table,
+        .practical-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+        .transport-table th,
+        .transport-table td,
+        .practical-table th,
+        .practical-table td {
+            border: 1px solid #ddd;
+            padding: 6px 8px;
+            text-align: left;
+        }
+        .transport-table th,
+        .practical-table th {
+            background-color: #f2f2f2;
+            font-weight: 500;
+            color: #555;
+        }
+        .practical-table .category {
+            width: 20%;
+            font-weight: 500;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 10px;
+            color: #777;
+        }
+        .print-btn-container {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        #print-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Noto Sans SC', sans-serif;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+        #print-btn i {
+            margin-right: 5px;
+        }
+        @media print {
+            .print-btn-container {
+                display: none;
+            }
+            body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            .header {
+                margin-bottom: 10px;
+                padding-bottom: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="print-btn-container">
+        <button id="print-btn" onclick="window.print()"><i class="fas fa-print"></i> 打印行程表</button>
+    </div>
+
+    <div class="header">
+        <h1>杭州3日旅游规划</h1>
+        <div class="subtitle">旅行日期：2025年X月X日 - X月X日 | 旅行者：___________</div>
+        <div class="weather-info"><i class="fas fa-cloud-sun"></i> 杭州天气：晴，18-28°C，微风</div>
+    </div>
+
+    <div class="overview">
+        <div class="day-card">
+            <h3><i class="fas fa-sun"></i> 第一天：西湖经典游</h3>
+            <ul>
+                <li>杭州西湖风景名胜区</li>
+                <li>雷峰塔景区</li>
+                <li>三潭印月</li>
+                <li>西湖音乐喷泉</li>
+            </ul>
+        </div>
+        <div class="day-card">
+            <h3><i class="fas fa-map-marked-alt"></i> 第二天：历史文化体验</h3>
+            <ul>
+                <li>清河坊历史文化街区</li>
+                <li>胡雪岩故居</li>
+                <li>杭州博物馆</li>
+                <li>钱江新城灯光秀</li>
+            </ul>
+        </div>
+        <div class="day-card">
+            <h3><i class="fas fa-tree"></i> 第三天：禅意自然之旅</h3>
+            <ul>
+                <li>灵隐寺</li>
+                <li>飞来峰</li>
+                <li>西溪国家湿地公园</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="timeline">
+        <h2><i class="fas fa-clock"></i> 详细行程安排</h2>
+        <table class="timeline-table">
+            <tr>
+                <th class="time">时间</th>
+                <th class="activity">活动</th>
+                <th class="location">地点</th>
+                <th class="details">详情</th>
+            </tr>
+            <tr>
+                <td>09:00-11:30</td>
+                <td><span class="icon-label attraction"><i class="fas fa-camera"></i> 景点</span> 西湖漫步</td>
+                <td>杭州西湖风景名胜区（断桥残雪-白堤-平湖秋月）</td>
+                <td>全天开放，免费；建议早出发避开人流</td>
+            </tr>
+            <tr>
+                <td>12:00-13:30</td>
+                <td><span class="icon-label food"><i class="fas fa-utensils"></i> 餐饮</span> 午餐</td>
+                <td>湖滨步行街附近餐馆</td>
+                <td>推荐：葱包桧、定胜糕、西湖醋鱼</td>
+            </tr>
+            <tr>
+                <td>14:00-16:00</td>
+                <td><span class="icon-label attraction"><i class="fas fa-camera"></i> 景点</span> 雷峰塔游览</td>
+                <td>雷峰塔景区（南山路15号）</td>
+                <td>门票40元，8:00-18:00；登塔俯瞰西湖全景</td>
+            </tr>
+            <tr>
+                <td>16:30-18:00</td>
+                <td><span class="icon-label attraction"><i class="fas fa-camera"></i> 景点</span> 三潭印月</td>
+                <td>西湖中央（需乘船前往）</td>
+                <td>船票55元含门票；西湖十景之一</td>
+            </tr>
+            <tr>
+                <td>19:00-20:00</td>
+                <td><span class="icon-label attraction"><i class="fas fa-camera"></i> 景点</span> 音乐喷泉</td>
+                <td>西湖湖滨三公园</td>
+                <td>免费，19:00、20:00各一场，提前30分钟占位</td>
+            </tr>
+            <tr>
+                <td>09:00-12:00</td>
+                <td><span class="icon-label attraction"><i class="fas fa-camera"></i> 景点</span> 清河坊游览</td>
+                <td>清河坊历史文化特色街区（河坊街180号）</td>
+                <td>9:00-21:30，免费；胡雪岩故居门票20元</td>
+            </tr>
+            <tr>
+                <td>12:30-14:00</td>
+                <td><span class="icon-label food"><i class="fas fa-utensils"></i> 餐饮</span> 午餐</td>
+                <td>河坊街杭帮菜馆</td>
+                <td>推荐：东坡肉、叫花鸡、龙井虾仁</td>
+            </tr>
+            <tr>
+                <td>14:30-16:30</td>
+                <td><span class="icon-label attraction"><i class="fas fa-camera"></i> 景点</span> 博物馆参观</td>
+                <td>杭州博物馆（粮道山18号）</td>
+                <td>免费，9:00-17:00（周一闭馆）；了解杭州历史文化</td>
+            </tr>
+            <tr>
+                <td>17:00-18:00</td>
+                <td><span class="icon-label attraction"><i class="fas fa-camera"></i> 景点</span> 吴山景区</td>
+                <td>吴山景区（吴山广场2号）</td>
+                <td>免费；俯瞰杭州老城风貌</td>
+            </tr>
+            <tr>
+                <td>19:30-20:00</td>
+                <td><span class="icon-label attraction"><i class="fas fa-camera"></i> 景点</span> 灯光秀</td>
+                <td>钱江新城</td>
+                <td>免费，19:30-20:00；现代杭州夜景</td>
+            </tr>
+            <tr>
+                <td>08:00-11:30</td>
+                <td><span class="icon-label attraction"><i class="fas fa-camera"></i> 景点</span> 灵隐寺游览</td>
+                <td>灵隐寺（法云弄1号）</td>
+                <td>门票75元，6:30-18:00；飞来峰石窟造像</td>
+            </tr>
+            <tr>
+                <td>12:00-13:30</td>
+                <td><span class="icon-label food"><i class="fas fa-utensils"></i> 餐饮</span> 午餐</td>
+                <td>灵隐寺附近素斋馆</td>
+                <td>推荐：罗汉斋、素面</td>
+            </tr>
+            <tr>
+                <td>14:30-17:30</td>
+                <td><span class="icon-label attraction"><i class="fas fa-camera"></i> 景点</span> 西溪湿地</td>
+                <td>西溪国家湿地公园（天目山路518号）</td>
+                <td>门票需确认，7:30-18:30；乘船游览芦苇荡</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="transport-info">
+        <h2><i class="fas fa-bus"></i> 交通信息</h2>
+        <table class="transport-table">
+            <tr>
+                <th>行程</th>
+                <th>交通方式</th>
+                <th>路线</th>
+                <th>时间/费用</th>
+            </tr>
+            <tr>
+                <td>西湖景区内</td>
+                <td><span class="icon-label transport"><i class="fas fa-bicycle"></i> 骑行</span></td>
+                <td>租用公共自行车</td>
+                <td>1小时内免费，押金200元</td>
+            </tr>
+            <tr>
+                <td>西湖-雷峰塔</td>
+                <td><span class="icon-label transport"><i class="fas fa-walking"></i> 步行</span></td>
+                <td>沿西湖西岸向南步行</td>
+                <td>约30分钟</td>
+            </tr>
+            <tr>
+                <td>西湖-清河坊</td>
+                <td><span class="icon-label transport"><i class="fas fa-subway"></i> 地铁</span></td>
+                <td>地铁7号线（吴山广场站下车）</td>
+                <td>约15分钟，3元</td>
+            </tr>
+            <tr>
+                <td>清河坊-钱江新城</td>
+                <td><span class="icon-label transport"><i class="fas fa-bus"></i> 公交</span></td>
+                <td>公交992路（市民中心站下车）</td>
+                <td>约30分钟，2元</td>
+            </tr>
+            <tr>
+                <td>市区-灵隐寺</td>
+                <td><span class="icon-label transport"><i class="fas fa-bus"></i> 公交</span></td>
+                <td>公交7路、51路（灵隐站下车）</td>
+                <td>约40分钟，2元</td>
+            </tr>
+            <tr>
+                <td>灵隐寺-西溪湿地</td>
+                <td><span class="icon-label transport"><i class="fas fa-taxi"></i> 出租车</span></td>
+                <td>直接打车</td>
+                <td>约20分钟，30元左右</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="practical-info">
+        <h2><i class="fas fa-info-circle"></i> 实用信息</h2>
+        <table class="practical-table">
+            <tr>
+                <td class="category">紧急电话</td>
+                <td>旅游咨询：12301 | 报警：110 | 急救：120 | 火警：119</td>
+            </tr>
+            <tr>
+                <td class="category">门票预订</td>
+                <td>雷峰塔、灵隐寺建议提前在官方公众号预约；三潭印月船票可现场购买</td>
+            </tr>
+            <tr>
+                <td class="category">必备物品</td>
+                <td>身份证、舒适鞋子、防晒霜、遮阳伞、饮用水、充电宝</td>
+            </tr>
+            <tr>
+                <td class="category">杭州特产</td>
+                <td>西湖龙井、丝绸、王星记扇子、张小泉剪刀（推荐河坊街购买）</td>
+            </tr>
+            <tr>
+                <td class="category">注意事项</td>
+                <td>西湖景区周末人流大，建议工作日出行；灵隐寺内请勿拍照；尊重当地文化习俗</td>
+            </tr>
+            <tr>
+                <td class="category">预算参考</td>
+                <td>门票约200元/人，餐饮约150-200元/天，交通约50元/天</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="footer">
+        <p>杭州3日旅游规划表 | 祝您旅途愉快！</p>
+    </div>
+
+    <script>
+        // 打印优化
+        document.getElementById('print-btn').addEventListener('click', function() {
+            window.print();
+        });
+
+        // 页面加载完成后自动调整表格布局
+        window.addEventListener('load', function() {
+            adjustTableLayout();
+        });
+
+        function adjustTableLayout() {
+            // 确保表格在打印时不会被截断
+            const tables = document.querySelectorAll('table');
+            tables.forEach(table => {
+                table.style.width = '100%';
+            });
+        }
+    </script>
+</body>
+</html>
